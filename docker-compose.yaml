@@ -1,0 +1,45 @@
+version: '3.7'
+services:
+  emqx:
+    image: emqx/emqx:${IMAGE_VERSION:-latest}
+    container_name: ${CONTAINER_NAME:-emqx-container}
+    hostname: ${CONTAINER_NAME:-emqx-container}
+    healthcheck:
+      test: [ "CMD", "/opt/emqx/bin/emqx_ctl", "status" ]
+      interval: 5s
+      timeout: 25s
+      retries: 5
+    environment:
+      EMQX_NAME: ${CONTAINER_NAME:-emqx-container}
+      EMQX_HOST: ${CONTAINER_NAME:-emqx-container}
+    volumes:
+      - type: volume
+        source: vol-emqx-etc
+        target: /opt/emqx/etc
+      - type: volume
+        source: vol-emqx-data
+        target: /opt/emqx/data
+      - type: volume
+        source: vol-emqx-log
+        target: /opt/emqx/log
+    ports:
+      - ${MQTT_PORT:-1883}:1883
+      - ${UI_PORT:-18083}:18083
+      - 8883:8883
+      - 8083:8083
+      - 8084:8084
+    networks: [ emqx-network ]
+    restart: unless-stopped
+
+volumes:
+  vol-emqx-etc:
+    name: vol-emqx-etc
+  vol-emqx-data:
+    name: vol-emqx-data
+  vol-emqx-log:
+    name: vol-emqx-log
+
+networks:
+  emqx-network:
+    external: True
+    name: ${EXTERNAL_NETWORK:-ily-network}

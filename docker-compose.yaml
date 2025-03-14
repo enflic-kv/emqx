@@ -42,4 +42,4 @@ volumes:
 networks:
   emqx-network:
     external: True
-    name: ${EXTERNAL_NETWORK:-ily-network}
+    name: ${EXTERNAL_NETWORK:-homelab-network}
